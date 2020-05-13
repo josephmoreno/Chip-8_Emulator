@@ -359,12 +359,12 @@ struct chip8_arch {
 
 				// opcode == 0xfX0a; waits for a key press then stores it in gen_reg[0x0X].
 				}else if (mem[pc + 1] == 0x0a) {
-					while (keyDown != 0x01);
-
-					gen_reg[(mem[pc] & 0x0f)] = keyPressed;
+					if (keyDown == 0x01) {
+						gen_reg[(mem[pc] & 0x0f)] = keyPressed;
 					
-					keyDown = 0x00;
-					pc += 2;
+						keyDown = 0x00;
+						pc += 2;
+					}
 
 				// opcode == 0xfX15; sets d_reg = gen_reg[0x0X].
 				}else if (mem[pc + 1] == 0x15) {

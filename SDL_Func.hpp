@@ -43,8 +43,8 @@ bool init() {
 				printf("Renderer failed to be created. SDL Error: %s\n", SDL_GetError());
 				success = false;
 			}else {
-				// Initialize renderer color
-				SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+				// Initialize renderer color to black.
+				SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 
 				// Initialize .png loading.
 				int imgFlags = IMG_INIT_PNG;
