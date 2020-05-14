@@ -277,5 +277,8 @@ void drawScreen() {
 	// Update the screen.
 	SDL_RenderPresent(renderer);
 
+	// Set the display flag to 0x00.
+	Chip8.dispFlag = 0x00;
+
 	return;
 }
