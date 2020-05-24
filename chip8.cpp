@@ -72,10 +72,24 @@ int main(int argc, char *argv[]) {
 	// The SDL event handler.
 	SDL_Event e;
 
+	// Frame limiter.
+	unsigned int frame_limiter = 1000000;
+
 	// Main game loop...
 	while(!quit) {
+		// DEBUGGING
+		if (frame_limiter < 1000000) {
+			++frame_limiter;
+			continue;
+		}else
+			frame_limiter = 0;
+
 		// Emulate a cycle of the Chip-8 architecture.
 		Chip8.emulateCycle();
+		
+		// DEBUGGING BY SEEING ARCHITECTURE CONTENTS.	
+		//Chip8.printContents();
+		//std::cin.get();
 
 		// Render and update the screen if Chip8.dispFlag == 0x01.
 		if (Chip8.dispFlag == 0x01)

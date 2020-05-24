@@ -88,6 +88,7 @@ struct chip8_arch {
 	}
 
 	unsigned short temp_op = 0x0000;	// Used for debugging.
+	unsigned short temp_pc = 0x0000;	// Used for debugging.
 	void emulateCycle() {
 		// Fetch
 		unsigned short opcode = ((mem[pc] << 8) | mem[pc + 1]);
@@ -98,6 +99,9 @@ struct chip8_arch {
 		unsigned char c0 = 0x00, c1 = 0x00, c2 = 0x00;
 
 		srand(time(0));	// Used for random numbers.
+
+		temp_op = opcode;
+		temp_pc = pc;
 
 		// Decode and Execute (based off the most significant hex number)
 		switch (MSH) {
@@ -130,10 +134,10 @@ struct chip8_arch {
 			case 0x20:
 				// opcode == 0x2NNN; set PC to address 0x0NNN to call that subroutine.
 				if (stack[sp] == 0x0000)
-					stack[sp] = pc;
+					stack[sp] = (pc + 0x0002);
 				else {
 					++sp;
-					stack[sp] = pc;
+					stack[sp] = (pc + 0x0002);
 				}
 
 				pc = opcode & 0x0fff;
@@ -525,6 +529,32 @@ struct chip8_arch {
 			mem[addr] = buffer[x];
 			++addr;
 		}
+
+		return;
+	}
+
+	void printContents() {
+		unsigned int x;
+		
+		printf("===> PC: 0x%x\n", temp_pc);
+		printf("Opcode: 0x%x\n\n", temp_op);
+
+		printf("General Registers:\n");
+		for(x = 0; x < 16; ++x)
+			printf("%d: 0x%x\n", x, gen_reg[x]);
+
+		printf("\nAddress Register: 0x%x\n\n", addr_reg);
+
+		printf("Flag Register: 0x%x\n\n", flag0);
+
+		printf("Delay Register: 0x%x\n", d_reg);
+		printf("Sound Register: 0x%x\n\n", s_reg);
+
+		printf("Stack Pointer: 0x%x\nStack:\n", sp);
+		for(x = 0; x < 16; ++x) 
+			printf("%d: 0x%x\n", x, stack[x]);
+
+		printf("\n");
 
 		return;
 	}
