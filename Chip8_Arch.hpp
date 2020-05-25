@@ -75,7 +75,7 @@ struct chip8_arch {
 		mem.assign(4096, 0x00);
 		gen_reg.assign(16, 0x00);
 		addr_reg = 0x0000;
-		flag0 = 0x00;
+		//flag0 = 0x00;
 		d_reg = 0x00;
 		s_reg = 0x00;
 		sp = 0x00;
@@ -212,9 +212,9 @@ struct chip8_arch {
 					s0 = gen_reg[(mem[pc] & 0x0f)] + gen_reg[(mem[pc + 1] >> 4)];
 
 					if ((s0 & 0xff00) >= 0x0100)
-						flag0 = 0x01;
+						gen_reg[0x0f] = 0x01; //flag0 = 0x01;
 					else
-						flag0 = 0x00;
+						gen_reg[0x0f] = 0x00; //flag0 = 0x00;
 					
 					s0 = 0x0000;
 					pc += 2;
@@ -224,10 +224,10 @@ struct chip8_arch {
 				}else if ((mem[pc + 1] & 0x0f) == 0x05) {
 					if (gen_reg[(mem[pc] & 0x0f)] >= gen_reg[(mem[pc + 1] >> 4)]) {
 						gen_reg[(mem[pc] & 0x0f)] -= gen_reg[(mem[pc + 1] >> 4)];
-						flag0 = 0x01;
+						gen_reg[0x0f] = 0x01; //flag0 = 0x01;
 					}else {
 						gen_reg[(mem[pc] & 0x0f)] = 0x00;
-						flag0 = 0x00;
+						gen_reg[0x0f] = 0x00; //flag0 = 0x00;
 					}
 
 					pc += 2;
@@ -235,7 +235,7 @@ struct chip8_arch {
 				// opcode == 0x8X06; flag0 equals the LSB of gen_reg[0x0X]
 				// and gen_reg[0x0X] = gen_reg[0x0X] >> 1.
 				}else if ((mem[pc + 1] & 0x0f) == 0x06) {
-					flag0 = gen_reg[(mem[pc] & 0x0f)] & 0x01;
+					gen_reg[0x0f] = gen_reg[(mem[pc] & 0x0f)] & 0x01; //flag0 = gen_reg[(mem[pc] & 0x0f)] & 0x01;
 					gen_reg[(mem[pc] & 0x0f)] = gen_reg[(mem[pc] & 0x0f)] >> 1;
 
 					pc += 2;
@@ -245,10 +245,10 @@ struct chip8_arch {
 				}else if ((mem[pc + 1] & 0x0f) == 0x07) {
 					if (gen_reg[(mem[pc + 1] >> 4)] >= gen_reg[(mem[pc] & 0x0f)]) {
 						gen_reg[(mem[pc] & 0x0f)] = gen_reg[(mem[pc + 1] >> 4)] - gen_reg[(mem[pc] & 0x0f)];
-						flag0 = 0x01;
+						gen_reg[0x0f] = 0x01; //flag0 = 0x01;
 					}else {
 						gen_reg[(mem[pc] & 0x0f)] = 0x00;
-						flag0 = 0x00;
+						gen_reg[0x0f] = 0x00; //flag0 = 0x00;
 					}
 
 					pc += 2;
@@ -256,7 +256,7 @@ struct chip8_arch {
 				// opcode == 0x8X0e; flag0 equals the MSB of gen_reg[0x0X]
 				// and gen_reg[0x0X] = gen_reg[0x0X] << 1.
 				}else if ((mem[pc + 1] & 0x0f) == 0x0e) {
-					flag0 = gen_reg[(mem[pc] & 0x0f)] >> 7;
+					gen_reg[0x0f] = gen_reg[(mem[pc] & 0x0f)] >> 7; //flag0 = gen_reg[(mem[pc] & 0x0f)] >> 7;
 					gen_reg[(mem[pc] & 0x0f)] = gen_reg[(mem[pc] & 0x0f)] << 1;
 
 					pc += 2;
@@ -310,7 +310,8 @@ struct chip8_arch {
 				y = gen_reg[(mem[pc + 1] >> 4)];	// Y-coordinate for display.
 				c0 = mem[pc + 1] & 0x0f;		// Height of the sprite.
 
-				flag0 = 0x00;	// flag0 stays as 0x00 if none of the display's pixels go from 0x01 to 0x00.
+				gen_reg[0x0f] = 0x00;
+				//flag0 = 0x00;	// flag0 stays as 0x00 if none of the display's pixels go from 0x01 to 0x00.
 						// If at least 1 pixel goes from 0x01 to 0x00, flag0 = 0x01.
 
 				for(c1 = 0x00; c1 < c0; ++c1) {		// Height loop.
@@ -319,7 +320,7 @@ struct chip8_arch {
 						sprite_pix = (mem[addr_reg + c1] >> (0x07 - c2)) & 0x01;
 
 						if (disp_pix == 0x01 && sprite_pix == 0x01)
-							flag0 = 0x01;
+							gen_reg[0x0f] = 0x01; //flag0 = 0x01;
 
 						display[(64 * (c1 + y)) + (x + c2)] ^= (mem[addr_reg + c1] >> (0x07 - c2)) & 0x01;
 					}
@@ -387,9 +388,9 @@ struct chip8_arch {
 					addr_reg += gen_reg[(mem[pc] & 0x0f)];
 
 					if (addr_reg > 0x0fff)
-						flag0 = 0x01;
+						gen_reg[0x0f] = 0x01; //flag0 = 0x01;
 					else
-						flag0 = 0x00;
+						gen_reg[0x0f] = 0x00; //flag0 = 0x00;
 
 					pc +=2;
 
@@ -545,7 +546,7 @@ struct chip8_arch {
 
 		printf("\nAddress Register: 0x%x\n\n", addr_reg);
 
-		printf("Flag Register: 0x%x\n\n", flag0);
+		printf("Flag Register: 0x%x\n\n", gen_reg[0x0f] /*flag0*/);
 
 		printf("Delay Register: 0x%x\n", d_reg);
 		printf("Sound Register: 0x%x\n\n", s_reg);

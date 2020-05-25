@@ -73,12 +73,12 @@ int main(int argc, char *argv[]) {
 	SDL_Event e;
 
 	// Frame limiter.
-	unsigned int frame_limiter = 1000000;
+	unsigned int frame_limiter = 500000;
 
 	// Main game loop...
 	while(!quit) {
 		// DEBUGGING
-		if (frame_limiter < 1000000) {
+		if (frame_limiter < 500000) {
 			++frame_limiter;
 			continue;
 		}else
