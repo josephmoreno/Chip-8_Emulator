@@ -37,15 +37,15 @@ I compile and generate a .exe file for every push.\
 2.) Type in a name of one of the games included in the "ROMs" folder.\
 3.) Chip-8 controls have been mapped to the following keyboard input:\
 \
-    Chip-8 Keypad	==	Keyboard Input
-    -----------------		-----------------
-    | 1 | 2 | 3 | C |		| 1 | 2 | 3 | 4 |
-    -----------------		-----------------
-    | 4 | 5 | 6 | D |		| Q | W | E | R |
-    -----------------		-----------------
-    | 7 | 8 | 9 | E |		| A | S | D | F |
-    -----------------		-----------------
-    | A | 0 | B | F |		| Z | X | C | V |
-    -----------------		-----------------
-
+    Chip-8 Keypad	==	Keyboard Input\
+    -----------------		-----------------\
+    | 1 | 2 | 3 | C |		| 1 | 2 | 3 | 4 |\
+    -----------------		-----------------\
+    | 4 | 5 | 6 | D |		| Q | W | E | R |\
+    -----------------		-----------------\
+    | 7 | 8 | 9 | E |		| A | S | D | F |\
+    -----------------		-----------------\
+    | A | 0 | B | F |		| Z | X | C | V |\
+    -----------------		-----------------\
+\
     To play music, press "P".
