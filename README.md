@@ -3,6 +3,7 @@
 *** PROJECT CURRENTLY IN PROGRESS
 
 *** These sources heavily referenced:
+
 Chip-8 Information:
 - http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/
 - http://emulator101.com/
@@ -12,9 +13,8 @@ Chip-8 Information:
 SDL Information:
 - http://lazyfoo.net/tutorials/SDL/index.php#Texture%20Streaming
 
-The extension libraries SDL_image and SDL_mixer are needed for compilation. I
-followed SDL tutorial "Lesson 06" (from the above link ^) to download and place
-the files in the correct directories for my compiler.
+The extension libraries SDL_image and SDL_mixer are needed for compilation.
+I followed SDL tutorial "Lesson 06" (from the above link ^) to download and place the files in the correct directories for my compiler.
 
 *** Purpose of this project:
 
@@ -27,6 +27,7 @@ the hardware as software.
 Another reason for undertaking this project is my interest in video games and
 emulators.
 
+
 *** Compilation:
 All code compiled using MinGW.
 Compilation command used is in the .bat file.
@@ -37,6 +38,7 @@ Please see the "SDL Information" reference (at the top ^).
 I compile and generate a .exe file for every push.
 
 *** How to use:
+
 1.) Run .exe file.
 2.) Type in a name of one of the games included in the "ROMs" folder.
 3.) Chip-8 controls have been mapped to the following keyboard input:
