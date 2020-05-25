@@ -190,6 +190,34 @@ int main(int argc, char *argv[]) {
 						Chip8.keys[0x0f] = 0x01;
 						Chip8.keyPressed = 0x0f;
 						break;
+
+					// For playing/pausing music.
+					case SDLK_p:
+
+						// If no music is active...
+						if (Mix_PlayingMusic() == 0) {
+
+							// ...then play the music.
+							Mix_PlayMusic(music, -1);
+
+						// If music is already active...
+						} else{
+
+							// ...if it's paused...
+							if (Mix_PausedMusic() == 1) {
+
+								// ...then resume it.
+								Mix_ResumeMusic();
+
+							// ...if it's playing...
+							}else {
+
+								// ...then pause it.
+								Mix_PauseMusic();
+							}
+						}
+
+						break;
 				}
 
 			// Key released...

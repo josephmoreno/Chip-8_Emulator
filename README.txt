@@ -10,6 +10,10 @@ Chip-8 Information:
 SDL Information:
 - http://lazyfoo.net/tutorials/SDL/index.php#Texture%20Streaming
 
+The extension libraries SDL_image and SDL_mixer are needed for compilation. I
+followed SDL tutorial "Lesson 06" (from the above link ^) to download and place
+the files in the correct directories for my compiler.
+
 *** Purpose of this project:
 Gain experience working with a library (SDL) that handles video/audio output and
 keystroke input.
@@ -20,9 +24,14 @@ the hardware as software.
 Another reason for undertaking this project is my interest in video games and
 emulators.
 
-*** Compilation
+*** Compilation:
 All code compiled using MinGW.
 Compilation command used is in the .bat file.
+
+SDL_image and SDL_mixer are needed for compilation.
+Please see the "SDL Information" reference (at the top ^).
+
+I compile and generate a .exe file for every push.
 
 *** How to use:
 1.) Run .exe file.
@@ -39,3 +48,5 @@ Compilation command used is in the .bat file.
     -----------------		-----------------
     | A | 0 | B | F |		| Z | X | C | V |
     -----------------		-----------------
+
+    To play music, press "P".

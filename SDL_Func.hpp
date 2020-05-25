@@ -4,6 +4,7 @@
 
 #include "SDL2\SDL.h"
 #include "SDL2\SDL_image.h"
+#include "SDL2\SDL_mixer.h"
 
 // The main window and its surface.
 SDL_Window *window = NULL;
@@ -16,6 +17,14 @@ SDL_Surface *currentSurface = NULL;
 SDL_Renderer *renderer = NULL;	// Window renderer.
 SDL_Texture *texture = NULL;	// Currently displayed texture.
 
+// Music variable.
+Mix_Music *music = NULL;
+
+// Sound effect variables.
+Mix_Chunk *high_SFX = NULL;
+Mix_Chunk *med_SFX = NULL;
+Mix_Chunk *low_SFX = NULL;
+
 int SCREEN_WIDTH = 640, SCREEN_HEIGHT = 320;
 
 bool init() {
@@ -23,7 +32,7 @@ bool init() {
 	bool success = true;
 
 	// Initialize SDL to access SDL functions.
-	if (SDL_Init(SDL_INIT_VIDEO < 0)) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		printf("Failed to initialize SDL. SDL Error: %s\n", SDL_GetError());
 		success = false;
 	}else {
@@ -52,6 +61,12 @@ bool init() {
 				if (!(IMG_Init(imgFlags) & imgFlags)) {
 					printf("SDL_image failed to initialize. SDL_image Error: %s\n", IMG_GetError());
 					success = false;
+				}
+				
+				// Initialize SDL_mixer.
+				if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+					printf("SDL_mixer failed to initialize. SDL_mixer Error: %s\n", Mix_GetError());
+					success = false;
 				}else {
 					// Get the window's surface.
 					screenSurface = SDL_GetWindowSurface(window);
@@ -67,6 +82,13 @@ bool loadMedia() {
 	// ...return variable.
 	bool success = true;
 
+	// Load the music in.
+	music = Mix_LoadMUS("Music/Casiopea - Mint Jams (Album).mp3");
+	if (music == NULL) {
+		printf("Failed to load music. SDL_mixer Error: %s\n", Mix_GetError());
+		success = false;
+	}
+
 	return success;
 }
 
@@ -76,6 +98,18 @@ void close() {
 		SDL_FreeSurface(keyPressSurfaces[x]);
 		keyPressSurfaces[x] = NULL;
 	}*/
+
+	// Deallocate sound effects.
+	Mix_FreeChunk(high_SFX);
+	Mix_FreeChunk(med_SFX);
+	Mix_FreeChunk(low_SFX);
+	high_SFX = NULL;
+	med_SFX = NULL;
+	low_SFX = NULL;
+
+	// Deallocate music.
+	Mix_FreeMusic(music);
+	music = NULL;
 
 	// Deallocate texture.
 	if (texture != NULL) SDL_DestroyTexture(texture);
@@ -88,6 +122,7 @@ void close() {
 	renderer = NULL;
 
 	// Close the SDL subsystems.
+	Mix_Quit();
 	IMG_Quit();
 	SDL_Quit();
 
