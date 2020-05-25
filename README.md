@@ -17,6 +17,7 @@ followed SDL tutorial "Lesson 06" (from the above link ^) to download and place
 the files in the correct directories for my compiler.
 
 *** Purpose of this project:
+
 Gain experience working with a library (SDL) that handles video/audio output and
 keystroke input.
 
