@@ -24,6 +24,7 @@ Mix_Music *music = NULL;
 Mix_Chunk *high_SFX = NULL;
 Mix_Chunk *med_SFX = NULL;
 Mix_Chunk *low_SFX = NULL;
+Mix_Chunk *chuu_warai = NULL;
 
 int SCREEN_WIDTH = 640, SCREEN_HEIGHT = 320;
 
@@ -89,6 +90,13 @@ bool loadMedia() {
 		success = false;
 	}
 
+	// Load the SFX in.
+	chuu_warai = Mix_LoadWAV("Music/chuu_warai.wav");
+	if (chuu_warai == NULL) {
+		printf("Failed to load sound effect. SDL_mixer Error: %s\n", Mix_GetError());
+		success = false;
+	}
+
 	return success;
 }
 
@@ -103,9 +111,11 @@ void close() {
 	Mix_FreeChunk(high_SFX);
 	Mix_FreeChunk(med_SFX);
 	Mix_FreeChunk(low_SFX);
+	Mix_FreeChunk(chuu_warai);
 	high_SFX = NULL;
 	med_SFX = NULL;
 	low_SFX = NULL;
+	chuu_warai = NULL;
 
 	// Deallocate music.
 	Mix_FreeMusic(music);

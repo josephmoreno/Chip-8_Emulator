@@ -86,6 +86,11 @@ int main(int argc, char *argv[]) {
 
 		// Emulate a cycle of the Chip-8 architecture.
 		Chip8.emulateCycle();
+
+		// Play sound effect if sound register > 0.
+		if (Chip8.s_reg > 0x00) {
+			Mix_PlayChannel(-1, chuu_warai, 0);
+		}
 		
 		// DEBUGGING BY SEEING ARCHITECTURE CONTENTS.	
 		//Chip8.printContents();
