@@ -1,7 +1,5 @@
 # Chip-8 Emulator
 
-*** PROJECT CURRENTLY IN PROGRESS
-
 *** These sources heavily referenced:\
 Chip-8 Information:
 - http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/

@@ -26,7 +26,37 @@ Mix_Chunk *med_SFX = NULL;
 Mix_Chunk *low_SFX = NULL;
 Mix_Chunk *chuu_warai = NULL;
 
-int SCREEN_WIDTH = 640, SCREEN_HEIGHT = 320;
+const int SCREEN_WIDTH = 640, SCREEN_HEIGHT = 320;
+const int FPS = 500;
+const int MS_PER_FRAME = 1000 / FPS;
+
+class Timer {
+private:
+	Uint32 start_ticks;
+
+	// Number of current ticks when the timer is paused.
+	Uint32 paused_ticks;
+
+	// Timer's status.
+	bool paused;
+	bool started;
+
+public:
+	// Constructor.
+	Timer();
+
+	void start();
+	void stop();
+	void pause();
+	void unpause();
+
+	// Gets the timer's number of ticks.
+	Uint32 getTicks();
+
+	// Checks the status of the timer.
+	bool isStarted();
+	bool isPaused();	
+};
 
 bool init() {
 	// This will be the return variable.
@@ -185,4 +215,76 @@ SDL_Texture *loadTexture(std::string path) {
 	}
 
 	return newTexture;
+}
+
+Timer::Timer() {
+	start_ticks = 0;
+	paused_ticks = 0;
+	started = false;
+	paused = false;
+
+	return;
+}
+
+void Timer::start() {
+	started = true;
+	paused = false;
+
+	// Get the current number of ticks.
+	start_ticks = SDL_GetTicks();
+	paused_ticks = 0;
+
+	return;
+}
+
+void Timer::stop() {
+	started = false;
+	paused = false;
+
+	start_ticks = 0;
+	paused_ticks = 0;
+
+	return;
+}
+
+void Timer::pause() {
+	if (started && !paused) {
+		paused = true;
+
+		paused_ticks += SDL_GetTicks() - start_ticks;
+		start_ticks = 0;
+	}
+
+	return;
+}
+
+void Timer::unpause() {
+	if (started && paused) {
+		paused = false;
+
+		start_ticks = SDL_GetTicks();
+	}
+
+	return;
+}
+
+Uint32 Timer::getTicks() {
+	Uint32 time = 0;
+
+	if (started) {
+		if (paused)
+			time = paused_ticks;
+		else
+			time = paused_ticks + (SDL_GetTicks() - start_ticks);
+	}
+
+	return time;
+}
+
+bool Timer::isStarted() {
+	return started;
+}
+
+bool Timer::isPaused() {
+	return paused;
 }

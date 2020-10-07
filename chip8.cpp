@@ -72,17 +72,39 @@ int main(int argc, char *argv[]) {
 	// The SDL event handler.
 	SDL_Event e;
 
+	// Create timers and frame counter.
+	Timer fps_timer;
+	Timer frame_cap_timer;
+	int frame_counter = 0;
+	float avg_FPS = 0;
+	fps_timer.start();
+
 	// Frame limiter.
-	unsigned int frame_limiter = 500000;
+	//unsigned int frame_limiter = 500000;
 
 	// Main game loop...
 	while(!quit) {
 		// DEBUGGING
-		if (frame_limiter < 500000) {
+		/*if (frame_limiter < 500000) {
 			++frame_limiter;
 			continue;
 		}else
-			frame_limiter = 0;
+			frame_limiter = 0;*/
+		
+		// Start the cap timer for each cycle.
+		frame_cap_timer.start();
+
+		// Calculate the average FPS.
+		avg_FPS = (frame_counter / (fps_timer.getTicks() / 1000.f));
+		if (avg_FPS > 2000000)
+			avg_FPS = 0;
+
+		// Reset frame counter and the FPS timer if frame_counter == 60.
+		if (frame_counter >= 60) {
+			frame_counter = 0;
+			fps_timer.stop();
+			fps_timer.start();
+		}
 
 		// Emulate a cycle of the Chip-8 architecture.
 		Chip8.emulateCycle();
@@ -97,8 +119,14 @@ int main(int argc, char *argv[]) {
 		//std::cin.get();
 
 		// Render and update the screen if Chip8.dispFlag == 0x01.
-		if (Chip8.dispFlag == 0x01)
+		if (Chip8.dispFlag == 0x01) {
 			drawScreen();
+			++frame_counter;
+		}
+
+		// Delay until the cap timer >= MS_PER_FRAME.
+		while (frame_cap_timer.getTicks() < MS_PER_FRAME) {}
+		frame_cap_timer.stop();
 
 		// Take input from the player.
 		while (SDL_PollEvent(&e) != 0) {
