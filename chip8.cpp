@@ -1,13 +1,11 @@
-#include "SDL_Func.hpp"
-#include "Chip8_Arch.hpp"
-
-// Initialize Chip-8 architecture.
-chip8_arch Chip8;
-
-// Function for drawing to the screen.
-void drawScreen();
+#include "sdl_func.hpp"
 
 int main(int argc, char *argv[]) {
+	// Initialize Chip-8 architecture.
+	Chip8Arch Chip8;
+
+	// Initalize SDL object
+	SdlObj SdlObj0;
 
 	// Variables used for loading a ROM.
 	FILE *file = NULL;
@@ -56,11 +54,11 @@ int main(int argc, char *argv[]) {
 	Chip8.loadROM(buffer);
 
 	// Starting up SDL and creating a window.
-	if (!init()) {
+	if (!SdlObj0.init()) {
 		return(1);
 	}else {
 		// Load the media.
-		if (!loadMedia()) {
+		if (!SdlObj0.loadMedia()) {
 			return(1);
 		}
 	}
@@ -111,7 +109,7 @@ int main(int argc, char *argv[]) {
 
 		// Play sound effect if sound register > 0.
 		if (Chip8.s_reg > 0x00) {
-			Mix_PlayChannel(-1, chuu_warai, 0);
+			Mix_PlayChannel(-1, SdlObj0.chuu_warai, 0);
 		}
 		
 		// DEBUGGING BY SEEING ARCHITECTURE CONTENTS.	
@@ -120,12 +118,12 @@ int main(int argc, char *argv[]) {
 
 		// Render and update the screen if Chip8.dispFlag == 0x01.
 		if (Chip8.dispFlag == 0x01) {
-			drawScreen();
+			SdlObj0.drawScreen(Chip8);
 			++frame_counter;
 		}
 
 		// Delay until the cap timer >= MS_PER_FRAME.
-		while (frame_cap_timer.getTicks() < MS_PER_FRAME) {}
+		while (frame_cap_timer.getTicks() < SdlObj0.MS_PER_FRAME) {}
 		frame_cap_timer.stop();
 
 		// Take input from the player.
@@ -231,7 +229,7 @@ int main(int argc, char *argv[]) {
 						if (Mix_PlayingMusic() == 0) {
 
 							// ...then play the music.
-							Mix_PlayMusic(music, -1);
+							Mix_PlayMusic(SdlObj0.music, -1);
 
 						// If music is already active...
 						} else{
@@ -325,35 +323,35 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Deallocate resources and close SDL.
-	close();
+	SdlObj0.close();
 
 	return(0);
 
 }
 
-void drawScreen() {
-	unsigned int x;
+// void drawScreen() {
+// 	unsigned int x;
 
-	SDL_Rect pixel;
+// 	SDL_Rect pixel;
 
-	// Clear the screen with black.
-	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
-	SDL_RenderClear(renderer);
+// 	// Clear the screen with black.
+// 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+// 	SDL_RenderClear(renderer);
 
-	for(x = 0; x < Chip8.display.size(); ++x) {
-		if (Chip8.display[x] == 0x01) {
-			// Render the 10x10 "pixel" to the screen.
-			pixel = {(((int)x % 64) * 10), (((int)x / 64) * 10), 10, 10};
-			SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
-			SDL_RenderFillRect(renderer, &pixel);
-		}
-	}
+// 	for(x = 0; x < Chip8.display.size(); ++x) {
+// 		if (Chip8.display[x] == 0x01) {
+// 			// Render the 10x10 "pixel" to the screen.
+// 			pixel = {(((int)x % 64) * 10), (((int)x / 64) * 10), 10, 10};
+// 			SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
+// 			SDL_RenderFillRect(renderer, &pixel);
+// 		}
+// 	}
 
-	// Update the screen.
-	SDL_RenderPresent(renderer);
+// 	// Update the screen.
+// 	SDL_RenderPresent(renderer);
 
-	// Set the display flag to 0x00.
-	Chip8.dispFlag = 0x00;
+// 	// Set the display flag to 0x00.
+// 	Chip8.dispFlag = 0x00;
 
-	return;
-}
+// 	return;
+// }
