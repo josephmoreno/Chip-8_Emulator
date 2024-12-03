@@ -4,6 +4,16 @@
 // Build with only BRIX ROM:
 // em++ -std=gnu++17 -Wall chip8.cpp sdl_func.cpp chip8_arch.cpp -o chip8.html --use-port=sdl2 --use-port=sdl2_image:formats=png -sUSE_SDL_MIXER=2 -sSDL2_MIXER_FORMATS=wav,mp3 -sSINGLE_FILE --embed-file debug/ROMs/BRIX@ROMs/BRIX --embed-file debug/Music@Music
 
+// Build for ES6 (was able to use in Vite React app):
+// em++ -std=gnu++17 -Wall chip8.cpp sdl_func.cpp chip8_arch.cpp -o chip8.mjs --use-port=sdl2 --use-port=sdl2_image:formats=png -sUSE_SDL_MIXER=2 -sSDL2_MIXER_FORMATS=wav,mp3 -sMODULARIZE=1 -sEXIT_RUNTIME=1 --embed-file debug/ROMs/BRIX@ROMs/BRIX --embed-file debug/Music@Music
+// * -sMODULARIZE=1 and .mjs output file extension; .mjs implicitly enables EXPORT_ES6 flag
+// * Default module name is 'Module'; use EXPORT_NAME=<different name> flag to use change from the default
+// * -sEXIT_RUNTIME=1 for enabling forced termination of the program
+// * https://emscripten.org/docs/tools_reference/settings_reference.html
+
+// Build for ES6, export normalQuit to terminate program:
+// em++ -std=gnu++17 -Wall chip8.cpp sdl_func.cpp chip8_arch.cpp -o chip8.mjs --use-port=sdl2 --use-port=sdl2_image:formats=png -sUSE_SDL_MIXER=2 -sSDL2_MIXER_FORMATS=wav,mp3 -sMODULARIZE=1 -sEXPORTED_FUNCTIONS=_main,_normalQuit -sEXPORTED_RUNTIME_METHODS=cwrap -sEXIT_RUNTIME=1 --embed-file debug/ROMs/BRIX@ROMs/BRIX --embed-file debug/Music@Music
+
 #include "sdl_func.hpp"
 
 #ifdef __EMSCRIPTEN__
@@ -406,4 +416,20 @@ static void mainLoop(void) {
 			}
 		}
 	}
+};
+
+extern "C" {
+	void normalQuit() {
+		SdlObj0.close();
+        #ifdef __EMSCRIPTEN__
+        emscripten_cancel_main_loop();
+        #else
+        exit(0);
+        #endif
+	}
+
+	// Simple example for troubleshooting
+	// int add(int x, int y) {
+	// 	return(x + y);
+	// }
 };
