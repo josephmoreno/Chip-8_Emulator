@@ -34,7 +34,7 @@ bool quit = false;
 SDL_Event e;
 
 // For FPS
-const int fps = 60;
+const int fps = 500;
 const int frame_delay = 1000 / fps;
 Uint32 frame_start;
 int frame_time;
