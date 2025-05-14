@@ -42,31 +42,3 @@ struct SdlObj {
 
 	SDL_Texture *loadTexture(std::string path);
 };
-
-class Timer {
-private:
-	Uint32 start_ticks;
-
-	// Number of current ticks when the timer is paused.
-	Uint32 paused_ticks;
-
-	// Timer's status.
-	bool paused;
-	bool started;
-
-public:
-	// Constructor.
-	Timer();
-
-	void start();
-	void stop();
-	void pause();
-	void unpause();
-
-	// Gets the timer's number of ticks.
-	Uint32 getTicks();
-
-	// Checks the status of the timer.
-	bool isStarted();
-	bool isPaused();	
-};
