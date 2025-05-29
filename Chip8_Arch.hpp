@@ -1,7 +1,10 @@
+#pragma once
+
 #include <vector>
 #include <ctime>
 
 struct chip8_arch {
+	bool initialized = false;
 	
 	// *** Chip-8 Specs
 	
@@ -34,7 +37,7 @@ struct chip8_arch {
 
 	// Keyboard
 	std::vector<unsigned char> keys = std::vector<unsigned char>(16, 0x00);	// key not pressed == 0x00
-										// key pressed == 0x01
+																			// key pressed == 0x01
 	
 	// Fontset
 	std::vector<unsigned char> fontset = std::vector<unsigned char>
@@ -83,6 +86,8 @@ struct chip8_arch {
 		display.assign(64 * 32, 0x00);
 		keys.assign(16, 0x00);
 		dispFlag = 0x00;
+
+		initialized = true;
 
 		return;
 	}
@@ -522,7 +527,7 @@ struct chip8_arch {
 		return;
 	}
 	
-	void loadROM(std::vector<unsigned char> buffer) {
+	void insertRom(std::vector<unsigned char> buffer) {
 		unsigned int x;
 		unsigned int addr = 0x200;
 
