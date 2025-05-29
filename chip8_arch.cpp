@@ -20,6 +20,8 @@ void Chip8Arch::initialize() {
     keys.assign(16, 0x00);
     dispFlag = 0x00;
 
+    initialized = true;
+
     return;
 }
 
@@ -456,7 +458,7 @@ void Chip8Arch::emulateCycle() {
     return;
 }
 
-void Chip8Arch::loadROM(std::vector<unsigned char> buffer) {
+void Chip8Arch::insertRom(std::vector<unsigned char> buffer) {
     unsigned int x;
     unsigned int addr = 0x200;
 

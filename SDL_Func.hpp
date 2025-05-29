@@ -1,9 +1,13 @@
+#pragma once
+
 #include <iostream>
 
 #include "SDL2\SDL.h"
 #include "SDL2\SDL_mixer.h"
 
 #include "chip8_arch.hpp"
+
+const int SCREEN_WIDTH = 640, SCREEN_HEIGHT = 320;
 
 struct SdlObj {
 	// The main window and its surface.
@@ -26,7 +30,6 @@ struct SdlObj {
 	Mix_Chunk *low_SFX = NULL;
 	Mix_Chunk *chuu_warai = NULL;
 
-	const int SCREEN_WIDTH = 640, SCREEN_HEIGHT = 320;
 	const int FPS = 500;
 	const Uint32 MS_PER_FRAME = 1000 / FPS;
 

@@ -1,10 +1,13 @@
+#pragma once
+
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
 #include <ctime>
 
 struct Chip8Arch {
-	
+	bool initialized = false;
+
 	// *** Chip-8 Specs
 	
 	// Memory: 4,096 bytes
@@ -72,7 +75,7 @@ struct Chip8Arch {
 	unsigned short temp_pc = 0x0000;	// Used for debugging.
 	void emulateCycle();
 	
-	void loadROM(std::vector<unsigned char> buffer);
+	void insertRom(std::vector<unsigned char> buffer);
 
 	void printContents();
 };

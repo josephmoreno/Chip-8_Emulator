@@ -14,7 +14,12 @@
 // Build for ES6, export normalQuit to terminate program:
 // em++ -std=gnu++17 -Wall chip8.cpp sdl_func.cpp chip8_arch.cpp -o chip8.mjs --use-port=sdl2 --use-port=sdl2_image:formats=png -sUSE_SDL_MIXER=2 -sSDL2_MIXER_FORMATS=wav,mp3 -sMODULARIZE=1 -sEXPORTED_FUNCTIONS=_main,_normalQuit -sEXPORTED_RUNTIME_METHODS=cwrap -sEXIT_RUNTIME=1 --embed-file debug/ROMs/BRIX@ROMs/BRIX --embed-file debug/Music@Music
 
+// 2025-05-29
+// em++ -std=gnu++17 -Wall chip8.cpp sdl_func.cpp chip8_arch.cpp -o chip8.mjs --use-port=sdl2 --use-port=sdl2_image:formats=png -sUSE_SDL_MIXER=2 -sSDL2_MIXER_FORMATS=wav,mp3 -sMODULARIZE=1 -sEXPORTED_FUNCTIONS=_main,_normalQuit -sEXPORTED_RUNTIME_METHODS=cwrap -sEXIT_RUNTIME=1 --embed-file debug/ROMs@ROMs --embed-file debug/Music@Music
+
 #include "sdl_func.hpp"
+#include "Chip8_Arch.hpp"
+#include "Menu.hpp"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -22,6 +27,9 @@
 
 // Initialize Chip-8 architecture.
 Chip8Arch Chip8;
+
+// Instantiate Menu object
+Menu menu;
 
 // Initalize SDL object
 SdlObj SdlObj0;
@@ -40,64 +48,27 @@ Uint32 frame_start;
 int frame_time;
 
 static void mainLoop(void);
+std::vector<unsigned char> loadRom();
+void emuLoop();
+void menuLoop();
 
 int main(int argc, char *argv[]) {
-	// Variables used for loading a ROM.
-	FILE *file = NULL;
-	// std::string ROM;
-
-	// // Asking the user for a ROM name.
-	// std::cout << "Enter the name of the game you want to play or enter \"Q\" to exit: ";
-	// std::cin >> ROM;
-
-	// if (ROM == "Q" || ROM == "q") return(0);
-
-	// ROM.insert(0, "ROMs\\");
-	// file = fopen(ROM.c_str(), "rb");
-
-	// while (file == NULL) {
-	// 	std::cout << "Could not find ROM by that name.\n";
-	// 	std::cout << "Enter the name of the game you want to play or enter \"Q\" to exit: ";
-	// 	std::cin >> ROM;
-
-	// 	if (ROM == "Q" || ROM == "q") return(0);
-
-	// 	ROM.insert(0, "ROMs\\");
-	// 	file = fopen(ROM.c_str(), "rb");
-	// }
-
-	file = fopen("ROMs/BRIX", "rb");
-
-	// Determine the ROM's size.
-	fseek(file, 0L, SEEK_END);
-	unsigned int file_size = ftell(file);
-	fseek(file, 0L, SEEK_SET);
-
-	// Initialize the Chip-8.
-	Chip8.initialize();
-
-	// Create buffer of the ROM's contents to load into the memory.
-	std::vector<unsigned char> buffer(file_size, 0x00);
-	unsigned int x;
-
-	for(x = 0; x < file_size; ++x) {
-		buffer[x] = fgetc(file);
-		//printf("0x%x\n", buffer[x]);
-	}
-
-	fclose(file);
-
-	// Load the ROM into memory.
-	Chip8.loadROM(buffer);
-
 	// Starting up SDL and creating a window.
-	if (!SdlObj0.init()) {
+	if (!SdlObj0.init())
 		return(1);
-	}else {
+	else {
 		// Load the media.
 		if (!SdlObj0.loadMedia()) {
 			return(1);
 		}
+	}
+
+	menu.init(*SdlObj0.renderer, *SdlObj0.loadTexture("./assets/fontsheet.png"), *SdlObj0.loadTexture("./assets/menu_arrow.png"), e, quit);
+	menu.initRomLib("./ROMs");
+
+	if (menu.rom_lib.empty()) {
+		std::cout << "Empty ROM library" << std::endl;
+		return(1);
 	}
 
 	#ifdef __EMSCRIPTEN__
@@ -120,6 +91,48 @@ static void mainLoop(void) {
         exit(0);
         #endif
     }
+
+	if (menu.cur_rom == "")
+		menuLoop();
+	else
+		emuLoop();
+
+	frame_time = SDL_GetTicks() - frame_start;
+
+	if (frame_delay > frame_time)
+		SDL_Delay(frame_delay - frame_time);
+};
+
+std::vector<unsigned char> loadRom() {
+	// Variables used for loading a ROM.
+	FILE *file = NULL;
+
+	file = fopen((menu.rom_lib_path + "/" + menu.cur_rom).c_str(), "rb");
+
+	// Determine the ROM's size.
+	fseek(file, 0L, SEEK_END);
+	unsigned int file_size = ftell(file);
+	fseek(file, 0L, SEEK_SET);
+
+	// Create buffer of the ROM's contents to load into the memory.
+	std::vector<unsigned char> buffer(file_size, 0x00);
+	unsigned int x;
+
+	for(x = 0; x < file_size; ++x)
+		buffer[x] = fgetc(file);
+
+	fclose(file);
+
+	return(buffer);
+};
+
+void emuLoop() {
+	// Initialize Chip-8 and insert ROM if not done already
+	if (!Chip8.initialized) {
+		std::vector<unsigned char> buffer = loadRom();
+		Chip8.initialize();
+		Chip8.insertRom(buffer);
+	}
 
 	// Emulate a cycle of the Chip-8 architecture.
 	Chip8.emulateCycle();
@@ -149,8 +162,8 @@ static void mainLoop(void) {
 			Chip8.keyDown = 0x01;
 
 			switch(e.key.keysym.sym) {
-				case SDLK_ESCAPE:
-					quit = true;
+				case SDLK_m:
+					menu.cur_rom = "";
 					break;
 
 				case SDLK_1:
@@ -331,11 +344,14 @@ static void mainLoop(void) {
 			}
 		}
 	}
+};
 
-	frame_time = SDL_GetTicks() - frame_start;
+void menuLoop() {
+	Chip8.initialized = false;
 
-	if (frame_delay > frame_time)
-		SDL_Delay(frame_delay - frame_time);
+	menu.handleEvents();
+	menu.update();
+	menu.render();
 };
 
 extern "C" {
